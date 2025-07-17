@@ -19,7 +19,6 @@ turtle.shape(image)
 state_list = pd.read_csv("50_states.csv")
 all_states = state_list.state.to_list()
 guessed_states = []
-missed_states = []
 
 # create a while loop to prompt the user to guess the states, Spelling matters, case does not
 while len(guessed_states) < 50:
@@ -27,7 +26,11 @@ while len(guessed_states) < 50:
                                     prompt= "What's another state?").title()
     # print(answer_state)
     if answer_state == "Exit":
+        missed_states = [state for state in all_states if state not in guessed_states]
+        missed_states_list = pd.DataFrame(missed_states)
+        missed_states_list.to_csv("check.csv")
         break
+
     if answer_state in all_states:
         guessed_states.append(answer_state)
         t = turtle.Turtle()
@@ -37,12 +40,3 @@ while len(guessed_states) < 50:
         state_data = state_list[state_list.state == answer_state]
         t.goto(state_data.x.item(), state_data.y.item())
         t.write(answer_state)
-
-
-# output a csv to see what states you missed
-for state in all_states:
-    if state not in guessed_states:
-        missed_states.append(state)
-
-missed_states_list = pd.DataFrame(missed_states)
-missed_states_list.to_csv("check.csv")
